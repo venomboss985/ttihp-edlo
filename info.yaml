@@ -1,7 +1,7 @@
 # Tiny Tapeout project information
 project:
   title:        "Experimental Direct Logical Operator"      # Project title
-  author:       "Jake T.      # Your name
+  author:       "Jake T."      # Your name
   discord:      "venomboss985"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "An experimental chip to discover what's possible"      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
