@@ -12,6 +12,10 @@
         * Change the behaviour of the `we` pin to a pulse to get more space
         * Leave as currently configured to fix leakage test results and keep normal behaviour, but not a lot of room left for compute
         * Create a buffer for the memory to attempt to keep normal behaviour
+    * Maybe have `busy` flag and an `output_enable` bit to try the data bus idea again
+    * Might need a memory controller after all... :(
+* ALU
+    * MAYBE need to separate the registers from the logic to make architecting easier to manage
 
 ## MVP
 - [ ] Target specs

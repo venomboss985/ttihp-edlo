@@ -16,14 +16,25 @@ module tt_um_venom_edlo (
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
+  wire [7:0] ram_bus;
+  // wire alu_busy;
 
   localparam ADDR_BITS = 4;
   memory_module #(.ADDR_BITS(ADDR_BITS)) RAM (
     .clock (clk),
     .addr (uio_in[ADDR_BITS-1:0]),
     .d_in (ui_in),
-    .d_out (uo_out),
-    .we (uio_in[ADDR_BITS])
+    .d_out (ram_bus),
+    .we (uio_in[7])
+  );
+
+  alu_module ALU (
+    .clock (clk),
+    // .reset (rst_n),
+    .in (ui_in),
+    .RET (uo_out),
+    .INST (uio_in[7:4])
+    // .busy (alu_busy)
   );
 
   always @(posedge clk) begin
