@@ -17,20 +17,48 @@ module tt_um_venom_edlo (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-  mem_cell memory (
-    .clock (clk),
-    .reset (rst_n),
-    .rw (uio_in[2]),
-    .addr_in (uio_in[1:0]),
-    .d_in (ui_in),
-    .d_out (uo_out)
-  );
+  // parameter n_cells = 4;
+  // genvar _cells;
+  // generate
+  //   wire [7:0] data_bus;
+  //   // wire [1:0] addr_bus;
+
+  //   for (_cells = 0; _cells < n_cells; _cells = _cells + 1) begin
+  //     mem_cell mem (
+  //       .clock (clk),
+  //       .reset (rst_n),
+  //       .rw (uio_in[2]),
+  //       .ADDR (_cells),
+  //       .addr (uio_in[1:0]),
+  //       .d_in (data_bus),
+  //       .d_out (data_bus)
+  //     );
+  //   end
+  // endgenerate
+
+  localparam ADDR_BITS = 2;
+  reg [7:0] RAM[2**ADDR_BITS];
+
+  wire [ADDR_BITS-1:0] addr;
+  wire [7:0] write_data;
+  wire we;
 
   always @(posedge clk) begin
     if (rst_n == 0) begin
       // Reset logic here
     end
+
+    // if (uio_in[2])
+    //   data_bus = ui_in;
+    if (we) RAM[addr] <= write_data;
   end
+
+  // assign addr_bus = uio_in[1:0];
+  // assign uo_out = data_bus;
+  assign we = uio_in[ADDR_BITS];
+  assign write_data = ui_in;
+  assign addr = uio_in[ADDR_BITS-1:0];
+  assign uo_out = RAM[addr];
 
   // All output pins must be assigned. If not used, assign to 0.
   assign uio_out = 0;

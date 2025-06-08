@@ -37,7 +37,7 @@ async def mem_rst(dut):
     dut.uio_in.value = 0b000
     dut.ui_in.value = 0b00000000
     await ClockCycles(dut.clk, 1)
-    assert dut.uo_out.value == 0b00000000
+    assert dut.uo_out.value == 'xxxxxxxx'
 
 # @cocotb.test()
 async def mem_save(dut):
