@@ -46,9 +46,9 @@ pinout:
   # Bidirectional pins
   uio[0]: "ADDR_IN0" # address select
   uio[1]: "ADDR_IN1"
-  uio[2]: "RW_EN" # address read/write mode
-  uio[3]: ""
-  uio[4]: ""
+  uio[2]: "ADDR_IN2"
+  uio[3]: "ADDR_IN3"
+  uio[4]: "WE" # write enable
   uio[5]: ""
   uio[6]: ""
   uio[7]: ""
