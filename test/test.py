@@ -8,7 +8,8 @@ import random
 
 READ_MODE = 0b0
 WRITE_MODE = 0b1
-MEMORY_CELLS = 4
+ADDR_BITS = 4
+MEMORY_CELLS = 2**ADDR_BITS
 
 async def start_and_reset(dut, rst_cycles: int = 10):
     dut._log.info("Start")
@@ -52,12 +53,12 @@ async def mem_save(dut):
 
             # Load data in memory
             # dut._log.info(f"Data: {bin(data)}")
-            dut.uio_in.value = (WRITE_MODE << 2) | addr
+            dut.uio_in.value = (WRITE_MODE << ADDR_BITS) | addr
             dut.ui_in.value = data
             await ClockCycles(dut.clk, 1)
 
             # Get data out from memory
-            dut.uio_in.value = (READ_MODE << 2) | addr
+            dut.uio_in.value = (READ_MODE << ADDR_BITS) | addr
             await ClockCycles(dut.clk, 2)
             assert dut.uo_out.value == data
 
@@ -70,13 +71,13 @@ async def mem_fill(dut):
         dut._log.info(f"Testing mem{addr} fill")
 
         dut._log.info(f"Setting mem{addr}")
-        dut.uio_in.value = (WRITE_MODE << 2) | addr
+        dut.uio_in.value = (WRITE_MODE << ADDR_BITS) | addr
         dut.ui_in.value = 0xFF
         await ClockCycles(dut.clk, 1)
     
         dut._log.info(f"Reading mem{addr}")
         dut.ui_in.value = 0x00
-        dut.uio_in.value = (READ_MODE << 2) | addr
+        dut.uio_in.value = (READ_MODE << ADDR_BITS) | addr
         await ClockCycles(dut.clk, 2)
         assert dut.uo_out.value == 0xFF
 
@@ -84,13 +85,13 @@ async def mem_fill(dut):
         dut._log.info(f"Testing mem{addr} empty")
         
         dut._log.info(f"Resetting mem{addr}")
-        dut.uio_in.value = (WRITE_MODE << 2) | addr
+        dut.uio_in.value = (WRITE_MODE << ADDR_BITS) | addr
         dut.ui_in.value = 0x00
         await ClockCycles(dut.clk, 1)
     
         dut._log.info(f"Reading mem{addr}")
         dut.ui_in.value = 0x00
-        dut.uio_in.value = (READ_MODE << 2) | addr
+        dut.uio_in.value = (READ_MODE << ADDR_BITS) | addr
         await ClockCycles(dut.clk, 2)
         assert dut.uo_out.value == 0x00
 
@@ -104,7 +105,7 @@ async def data_leakage(dut):
     for addr in range(MEMORY_CELLS):
         # Fill memory cells
         dut._log.info(f"Setting mem{addr} to 0x{data[addr]:2x}")
-        dut.uio_in.value = (WRITE_MODE << 2) | addr
+        dut.uio_in.value = (WRITE_MODE << ADDR_BITS) | addr
         dut.ui_in.value = data[addr]
         await ClockCycles(dut.clk, 1)
     
@@ -112,6 +113,6 @@ async def data_leakage(dut):
         dut._log.info(f"Reading mem{addr}")
     
         dut.ui_in.value = 0x00
-        dut.uio_in.value = (READ_MODE << 2) | addr
+        dut.uio_in.value = (READ_MODE << ADDR_BITS) | addr
         await ClockCycles(dut.clk, 2)
         assert dut.uo_out.value == data[addr]

@@ -1,5 +1,18 @@
 # TODO
 
+### Notes
+* Memory module
+    * Current memory module failed during leakage test, but due to needing clock signal, was rather space efficient
+    * Tested area use with different configurations (@16B)
+        * `always @(posedge clock) if (we)`: Keeps current function, but very inefficient
+        * `always @(posedge we)`: Changed `we` to pulsed signal and very inefficient
+        * `always @(we)`: Changed `we` to active high, a little less efficient from baseline
+        * `always @(posedge clock && we)`: Build failed /shrug
+    * Options are to either
+        * Change the behaviour of the `we` pin to a pulse to get more space
+        * Leave as currently configured to fix leakage test results and keep normal behaviour, but not a lot of room left for compute
+        * Create a buffer for the memory to attempt to keep normal behaviour
+
 ## MVP
 - [ ] Target specs
     - 8-bit data IO
@@ -9,22 +22,27 @@
 - [ ] Automatic A/B registering
 - [ ] Good docs
 
-### Nice-to-Haves'
+## PRIORITY
+- [x] Create modular addresable memory
+    - [x] Make parametric
+    - [x] Up to 4-bit address input
+    - [x] 8-bit data input
+    - [x] Account for clock cycle delays
+- [ ] Update tests for pulsed `we`?
+
+## BACKLOG
+- [ ] ALU
+    - [ ] 4-bit instruction input
+    - [ ] A, B, and Return registers
+    - [ ] Load/store A/B instruction
+    - [ ] Load/store Return instruction
+    - [ ] Addition instruction (consider carry/overflow bit)
+    - [ ] Subtraction instruction (consider carry/overflow bit)
+
+## OPTIONAL
 - [ ] Works at higher clock speeds (aim for 1MHz)
 - [ ] Selected address always output on `uo_out` pins
 - [ ] Works on FPGA
-
-## PRIORITY
-- [ ] Create modular addresable memory (to see if 4 or 5 bits is needed)
-    - Use parameters and `generate` if possible
-    - [ ] 4-bit address input
-    - [ ] 8-bit data input
-    - [ ] Account for clock cycle delays
-- [ ] 4-bit instruction input
-
-## BACKLOG
-
-## OPTIONAL
 
 ### Ideas
 - [ ] Signed/unsigned instruction flag
