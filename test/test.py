@@ -50,7 +50,7 @@ async def mem_save(dut):
             await reset(dut, 1)
 
             # Load data in memory
-            dut._log.info(f"Data: {bin(data)}")
+            # dut._log.info(f"Data: {bin(data)}")
             dut.uio_in.value = (WRITE_MODE << 2) | addr
             dut.ui_in.value = data
             await ClockCycles(dut.clk, 2)
@@ -64,30 +64,31 @@ async def mem_save(dut):
 async def mem_fill(dut):
     await start_and_reset(dut, 5)
 
-    dut._log.info("Testing memory fill")
     for addr in range(MEMORY_CELLS):
+        # Fill memory cells
+        dut._log.info(f"Testing mem{addr} fill")
+
         dut._log.info(f"Setting mem{addr}")
         dut.uio_in.value = (WRITE_MODE << 2) | addr
         dut.ui_in.value = 0xFF
         await ClockCycles(dut.clk, 1)
     
-    dut.ui_in.value = 0x00
-    for addr in range(MEMORY_CELLS):
         dut._log.info(f"Reading mem{addr}")
+        dut.ui_in.value = 0x00
         dut.uio_in.value = (READ_MODE << 2) | addr
         await ClockCycles(dut.clk, 2)
         assert dut.uo_out.value == 0xFF
 
-    dut._log.info("Testing memory fill")
-    for addr in range(MEMORY_CELLS):
+        # Empty memory cells
+        dut._log.info(f"Testing mem{addr} empty")
+        
         dut._log.info(f"Resetting mem{addr}")
         dut.uio_in.value = (WRITE_MODE << 2) | addr
         dut.ui_in.value = 0x00
         await ClockCycles(dut.clk, 1)
     
-    dut.ui_in.value = 0x00
-    for addr in range(MEMORY_CELLS):
         dut._log.info(f"Reading mem{addr}")
+        dut.ui_in.value = 0x00
         dut.uio_in.value = (READ_MODE << 2) | addr
         await ClockCycles(dut.clk, 2)
         assert dut.uo_out.value == 0x00
