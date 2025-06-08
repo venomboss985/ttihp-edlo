@@ -6,6 +6,30 @@
 `default_nettype none
 `timescale 1ns / 1ps
 
+module mem_cell (
+    input        clock,
+    input        reset,
+    input  [1:0] d_in,
+    output [1:0] d_out,
+    input  [1:0] addr_in,
+    input  [1:0] ADDR
+  );
+    reg [1:0] mem;
+
+    always @(posedge clock) begin
+      if (reset == 0) begin
+        // Reset logic here
+        mem = 0;
+      end
+
+      if (addr_in == ADDR) begin
+        mem = d_in;
+      end
+    end
+
+    assign d_out = mem;
+endmodule
+
 module tt_um_venom_edlo (
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
@@ -17,34 +41,26 @@ module tt_um_venom_edlo (
     input  wire       rst_n     // reset_n - low to reset
 );
 
-  reg [1:0] mem0;
-  reg [1:0] mem1;
-  reg [1:0] mem2;
-  reg [1:0] mem3;
+  parameter n_cells = 4;
+  genvar cells;
+  generate
+    for  (cells = 0; cells < n_cells; cells = cells + 1) begin
+      mem_cell memory (
+        .clock (clk),
+        .reset (rst_n),
+        .d_in (ui_in[1:0]),
+        .d_out (uo_out[1+(cells*2):0+(cells*2)]),
+        .addr_in (ui_in[3:2]),
+        .ADDR (cells)
+      );
+    end
+  endgenerate
 
   always @(posedge clk) begin
     if (rst_n == 0) begin
       // Reset logic here
-      mem0 = 0;
-      mem1 = 0;
-      mem2 = 0;
-      mem3 = 0;
     end
-
-    case (ui_in[3:2])
-      2'd0: mem0 = ui_in[1:0];
-      2'd1: mem1 = ui_in[1:0];
-      2'd2: mem2 = ui_in[1:0];
-      2'd3: mem3 = ui_in[1:0];
-      default: mem0 = ui_in[1:0];
-    endcase
   end
-
-  // Internal memory output
-  assign uo_out[1:0] = mem0;
-  assign uo_out[3:2] = mem1;
-  assign uo_out[5:4] = mem2;
-  assign uo_out[7:6] = mem3;
 
   // All output pins must be assigned. If not used, assign to 0.
   assign uio_out = 0;
