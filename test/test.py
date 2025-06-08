@@ -4,6 +4,7 @@
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
+import random
 
 READ_MODE = 0b0
 WRITE_MODE = 0b1
@@ -15,11 +16,11 @@ async def start_and_reset(dut, rst_cycles: int = 10):
     # Set the clock period to 10 us (100 KHz)
     clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())
-    await reset(dut, rst_cycles)
+    await reset(dut, rst_cycles, True)
 
-async def reset(dut, rst_cycles: int = 10):
+async def reset(dut, rst_cycles: int = 10, verbose: bool = False):
     # Reset
-    dut._log.info("Reset")
+    if verbose: dut._log.info("Reset")
     dut.ena.value = 1
     dut.ui_in.value = 0
     dut.uio_in.value = 0
@@ -38,7 +39,7 @@ async def mem_rst(dut):
     await ClockCycles(dut.clk, 1)
     assert dut.uo_out.value == 0b00000000
 
-@cocotb.test()
+# @cocotb.test()
 async def mem_save(dut):
     await start_and_reset(dut, 5)
 
@@ -53,7 +54,7 @@ async def mem_save(dut):
             # dut._log.info(f"Data: {bin(data)}")
             dut.uio_in.value = (WRITE_MODE << 2) | addr
             dut.ui_in.value = data
-            await ClockCycles(dut.clk, 2)
+            await ClockCycles(dut.clk, 1)
 
             # Get data out from memory
             dut.uio_in.value = (READ_MODE << 2) | addr
@@ -92,3 +93,25 @@ async def mem_fill(dut):
         dut.uio_in.value = (READ_MODE << 2) | addr
         await ClockCycles(dut.clk, 2)
         assert dut.uo_out.value == 0x00
+
+@cocotb.test()
+async def data_leakage(dut):
+    await start_and_reset(dut, 5)
+
+    data = [random.randint(0, 255) for _ in range(MEMORY_CELLS)]
+
+    dut._log.info(f"Filling memory with random values")
+    for addr in range(MEMORY_CELLS):
+        # Fill memory cells
+        dut._log.info(f"Setting mem{addr} to 0x{data[addr]:2x}")
+        dut.uio_in.value = (WRITE_MODE << 2) | addr
+        dut.ui_in.value = data[addr]
+        await ClockCycles(dut.clk, 1)
+    
+    for addr in range(MEMORY_CELLS):
+        dut._log.info(f"Reading mem{addr}")
+    
+        dut.ui_in.value = 0x00
+        dut.uio_in.value = (READ_MODE << 2) | addr
+        await ClockCycles(dut.clk, 2)
+        assert dut.uo_out.value == data[addr]

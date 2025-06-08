@@ -24,14 +24,14 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: "ADDR0" # selected address
-  ui[1]: "ADDR1"
-  ui[2]: "ADDR2"
-  ui[3]: "ADDR3"
-  ui[4]: "ADDR4"
-  ui[5]: "INST0" # selected instruction
-  ui[6]: "INST1"
-  ui[7]: "INST2"
+  ui[0]: "DATA_IN0" # data input
+  ui[1]: "DATA_IN1"
+  ui[2]: "DATA_IN2"
+  ui[3]: "DATA_IN3"
+  ui[4]: "DATA_IN4"
+  ui[5]: "DATA_IN5"
+  ui[6]: "DATA_IN6"
+  ui[7]: "DATA_IN7"
 
   # Outputs
   uo[0]: "ADDR_D0" # address memory data
@@ -44,14 +44,14 @@ pinout:
   uo[7]: "ADDR_D7"
 
   # Bidirectional pins
-  uio[0]: "D0" # input data
-  uio[1]: "D1"
-  uio[2]: "D2"
-  uio[3]: "D3"
-  uio[4]: "D4"
-  uio[5]: "D5"
-  uio[6]: "D6"
-  uio[7]: "D7"
+  uio[0]: "ADDR_IN0" # address select
+  uio[1]: "ADDR_IN1"
+  uio[2]: "RW_EN" # address read/write mode
+  uio[3]: ""
+  uio[4]: ""
+  uio[5]: ""
+  uio[6]: ""
+  uio[7]: ""
 
 # Do not change!
 yaml_version: 6

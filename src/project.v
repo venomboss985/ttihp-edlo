@@ -16,15 +16,14 @@ module tt_um_venom_edlo (
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
-  reg [7:0] out_buffer;
 
   mem_cell memory (
     .clock (clk),
     .reset (rst_n),
-    .wr (uio_in[2]),
+    .rw (uio_in[2]),
     .addr_in (uio_in[1:0]),
     .d_in (ui_in),
-    .d_out (out_buffer)
+    .d_out (uo_out)
   );
 
   always @(posedge clk) begin
@@ -32,8 +31,6 @@ module tt_um_venom_edlo (
       // Reset logic here
     end
   end
-
-  assign uo_out = out_buffer;
 
   // All output pins must be assigned. If not used, assign to 0.
   assign uio_out = 0;

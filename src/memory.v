@@ -4,17 +4,17 @@
 module mem_cell (
     input        clock,
     input        reset,
-    input        wr,
+    input        rw,
     input  [1:0] addr_in,
     input  [7:0] d_in,
-    output [7:0] d_out
+    output reg [7:0] d_out
   );
     reg [7:0] mem0;
     reg [7:0] mem1;
     reg [7:0] mem2;
     reg [7:0] mem3;
 
-    reg [7:0] mem_out;
+    wire [7:0] data_bus;
 
     always @(posedge clock) begin
       if (reset == 0) begin
@@ -25,25 +25,25 @@ module mem_cell (
         mem3 = 0;
       end
 
-      if (wr) begin
+      if (rw) begin
         case (addr_in)
-          0: mem0 = d_in;
-          1: mem1 = d_in;
-          2: mem2 = d_in;
-          3: mem3 = d_in;
-          default: mem0 = d_in;
+          0: mem0 = data_bus;
+          1: mem1 = data_bus;
+          2: mem2 = data_bus;
+          3: mem3 = data_bus;
+          default: mem0 = data_bus;
         endcase
       end else begin
         case (addr_in)
-          0: mem_out = mem0;
-          1: mem_out = mem1;
-          2: mem_out = mem2;
-          3: mem_out = mem3;
-          default: mem_out = mem0;
+          0: d_out = mem0;
+          1: d_out = mem1;
+          2: d_out = mem2;
+          3: d_out = mem3;
+          default: d_out = mem0;
         endcase
       end
     end
 
-    assign d_out = (!wr) ? mem_out : 8'b0;
+    assign data_bus = d_in;
 
 endmodule
