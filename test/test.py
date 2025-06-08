@@ -5,6 +5,9 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 
+READ_MODE = 0b0
+WRITE_MODE = 0b1
+MEMORY_CELLS = 4
 
 async def start_and_reset(dut, rst_cycles: int = 10):
     dut._log.info("Start")
@@ -30,9 +33,10 @@ async def mem_rst(dut):
 
     dut._log.info("Testing reset memory")
 
-    dut.ui_in.value = 0b0000
+    dut.uio_in.value = 0b000
+    dut.ui_in.value = 0b00000000
     await ClockCycles(dut.clk, 1)
-    assert dut.uo_out.value == 0b0000
+    assert dut.uo_out.value == 0b00000000
 
 @cocotb.test()
 async def mem_save(dut):
@@ -40,30 +44,50 @@ async def mem_save(dut):
 
     dut._log.info("Testing memory save")
 
-    for addr in range(4):
+    for addr in range(MEMORY_CELLS):
         dut._log.info(f"Addr: mem{addr}")
-        for data in range(4):
+        for data in range(0xFF):
             await reset(dut, 1)
+
+            # Load data in memory
             dut._log.info(f"Data: {bin(data)}")
-            dut.ui_in.value = (addr << 2) | data
+            dut.uio_in.value = (WRITE_MODE << 2) | addr
+            dut.ui_in.value = data
             await ClockCycles(dut.clk, 2)
-            assert dut.uo_out.value == (data << addr*2)
+
+            # Get data out from memory
+            dut.uio_in.value = (READ_MODE << 2) | addr
+            await ClockCycles(dut.clk, 2)
+            assert dut.uo_out.value == data
 
 @cocotb.test()
 async def mem_fill(dut):
     await start_and_reset(dut, 5)
 
     dut._log.info("Testing memory fill")
-    for addr in range(4):
+    for addr in range(MEMORY_CELLS):
         dut._log.info(f"Setting mem{addr}")
-        dut.ui_in.value = (addr << 2) | 0b11
+        dut.uio_in.value = (WRITE_MODE << 2) | addr
+        dut.ui_in.value = 0xFF
         await ClockCycles(dut.clk, 1)
-    await ClockCycles(dut.clk, 1)
-    assert dut.uo_out.value == 0b11111111
+    
+    dut.ui_in.value = 0x00
+    for addr in range(MEMORY_CELLS):
+        dut._log.info(f"Reading mem{addr}")
+        dut.uio_in.value = (READ_MODE << 2) | addr
+        await ClockCycles(dut.clk, 2)
+        assert dut.uo_out.value == 0xFF
 
-    for addr in range(4):
+    dut._log.info("Testing memory fill")
+    for addr in range(MEMORY_CELLS):
         dut._log.info(f"Resetting mem{addr}")
-        dut.ui_in.value = (addr << 2) | 0b00
+        dut.uio_in.value = (WRITE_MODE << 2) | addr
+        dut.ui_in.value = 0x00
         await ClockCycles(dut.clk, 1)
-    await ClockCycles(dut.clk, 1)
-    assert dut.uo_out.value == 0b00000000
+    
+    dut.ui_in.value = 0x00
+    for addr in range(MEMORY_CELLS):
+        dut._log.info(f"Reading mem{addr}")
+        dut.uio_in.value = (READ_MODE << 2) | addr
+        await ClockCycles(dut.clk, 2)
+        assert dut.uo_out.value == 0x00
