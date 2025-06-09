@@ -4,7 +4,7 @@
  */
 
 `default_nettype none
-`timescale 1ns / 1ps
+// `timescale 1ns / 1ps
 
 module tt_um_venom_edlo (
     input  wire [7:0] ui_in,    // Dedicated inputs
@@ -17,24 +17,27 @@ module tt_um_venom_edlo (
     input  wire       rst_n     // reset_n - low to reset
 );
   wire [7:0] ram_bus;
-  // wire alu_busy;
-
-  localparam ADDR_BITS = 4;
-  memory_module #(.ADDR_BITS(ADDR_BITS)) RAM (
-    .clock (clk),
-    .addr (uio_in[ADDR_BITS-1:0]),
-    .d_in (ui_in),
-    .d_out (ram_bus),
-    .we (uio_in[7])
-  );
+  wire [7:0] rtn_bus;
 
   alu_module ALU (
     .clock (clk),
     // .reset (rst_n),
-    .in (ui_in),
-    .RET (uo_out),
+    .in (ram_bus),
+    .RTN (rtn_bus),
     .INST (uio_in[7:4])
     // .busy (alu_busy)
+  );
+
+  localparam ADDR_BITS = 4;
+  memory_controller #(.ADDR_BITS(ADDR_BITS)) mem_ctrl (
+    .clock (clk),
+    .addr (uio_in[3:0]),
+    .data_in (ui_in),
+    .data_out (uo_out),
+    .inst (uio_in[7:4]),
+
+    .mem_in (rtn_bus),
+    .mem_out (ram_bus)
   );
 
   always @(posedge clk) begin
@@ -48,6 +51,6 @@ module tt_um_venom_edlo (
   assign uio_oe  = 0;
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{uio_in[7:3], ena, clk, rst_n, 1'b0};
+  wire _unused = &{ena, clk, rst_n, 1'b0};
 
 endmodule
