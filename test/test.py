@@ -13,6 +13,7 @@ STR_CYCLES = 1
 LDR_CYCLES = 2
 LDAB_CYCLES = 2
 ADD_CYCLES = 2
+SUB_CYCLES = 2
 LDRN_CYCLES = 2
 
 
@@ -24,7 +25,7 @@ LDB  = 0x4 # Load into B reg (input data)
 LDAR = 0x5 # Load into A reg (RAM)
 LDBR = 0x6 # Load into B reg (RAM)
 ADD  = 0x7 # Add A and B registers
-# SUB  = 0x8 # Subtract A and B registers
+SUB  = 0x8 # Subtract A and B registers
 # STRN = 0x9 # Store return into register (RAM)
 LDRN = 0x9 # Store return into register (output data)
 
@@ -140,9 +141,11 @@ async def alu_add(dut):
 
     dut._log.info(f"Adding 2 numbers")
 
+    # Inputs and expected output
     a_reg = 12
     b_reg = 50
     result = a_reg + b_reg
+
     # Load number into A register
     dut._log.info(f"Loading {a_reg} into A register")
     dut.ui_in.value = a_reg
@@ -160,6 +163,44 @@ async def alu_add(dut):
     dut.ui_in.value = 0x00
     dut.uio_in.value = (ADD << 4)
     await ClockCycles(dut.clk, ADD_CYCLES)
+
+    # Load RTN register
+    dut._log.info(f"Loading RTN register")
+    dut.uio_in.value = (LDRN << 4)
+    await ClockCycles(dut.clk, LDRN_CYCLES)
+
+    # Check output
+    dut._log.info(f"Checking output")
+    assert dut.uo_out.value == result
+
+@cocotb.test()
+async def alu_sub(dut):
+    await start_and_reset(dut, 5)
+
+    dut._log.info(f"Subtracting 2 numbers")
+
+    # Inputs and expected outputs
+    a_reg = 220
+    b_reg = 86
+    result = a_reg - b_reg
+
+    # Load number into A register
+    dut._log.info(f"Loading {a_reg} into A register")
+    dut.ui_in.value = a_reg
+    dut.uio_in.value = (LDA << 4)
+    await ClockCycles(dut.clk, LDAB_CYCLES)
+
+    # Load number into B register
+    dut._log.info(f"Loading {b_reg} into B register")
+    dut.ui_in.value = b_reg
+    dut.uio_in.value = (LDB << 4)
+    await ClockCycles(dut.clk, LDAB_CYCLES)
+
+    # Subtract A and B registers
+    dut._log.info(f"Subtracting registers")
+    dut.ui_in.value = 0x00
+    dut.uio_in.value = (SUB << 4)
+    await ClockCycles(dut.clk, SUB_CYCLES)
 
     # Load RTN register
     dut._log.info(f"Loading RTN register")

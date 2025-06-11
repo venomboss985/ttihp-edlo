@@ -18,7 +18,7 @@ module alu_module (
       'h5: A = ram_in;
       'h6: B = ram_in;
       'h7: RTN = A + B;
-      // 'h8: RTN = A - B;
+      'h8: RTN = A - B;
     endcase
   end
 
