@@ -28,6 +28,7 @@ module memory_controller #(parameter ADDR_BITS = 2) (
     end else begin
       case (inst)
         'h2, 'h3: out_buf = mem_out;
+        'h9: out_buf = mem_in;
       endcase
     end
   end

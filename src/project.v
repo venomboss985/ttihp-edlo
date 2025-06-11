@@ -16,13 +16,15 @@ module tt_um_venom_edlo (
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
+  wire [7:0] input_bus;
   wire [7:0] ram_bus;
   wire [7:0] rtn_bus;
 
   alu_module ALU (
     .clock (clk),
     // .reset (rst_n),
-    .in (ram_bus),
+    .data_in (input_bus),
+    .ram_in (ram_bus),
     .RTN (rtn_bus),
     .INST (uio_in[7:4])
     // .busy (alu_busy)
@@ -32,7 +34,7 @@ module tt_um_venom_edlo (
   memory_controller #(.ADDR_BITS(ADDR_BITS)) mem_ctrl (
     .clock (clk),
     .addr (uio_in[3:0]),
-    .data_in (ui_in),
+    .data_in (input_bus),
     .data_out (uo_out),
     .inst (uio_in[7:4]),
 
@@ -45,6 +47,8 @@ module tt_um_venom_edlo (
       // Reset logic here
     end
   end
+
+  assign input_bus = ui_in;
 
   // All output pins must be assigned. If not used, assign to 0.
   assign uio_out = 0;

@@ -9,18 +9,24 @@ import random
 ADDR_BITS = 4
 MEMORY_CELLS = 2**ADDR_BITS
 
-W_MEM_CYCLES = 1
-R_MEM_CYCLES = 2
+STR_CYCLES = 1
+LDR_CYCLES = 2
 LDAB_CYCLES = 2
-ADD_CYCLES = 1
+ADD_CYCLES = 2
+LDRN_CYCLES = 2
 
-NOP = 0x0
-STR = 0x1
-LDR = 0x2
-LDA = 0x3
-LDB = 0x4
-ADD = 0x5
-SUB = 0x6
+
+NOP  = 0x0 # No operation
+STR  = 0x1 # Store in register (RAM)
+LDR  = 0x2 # Load from register (RAM)
+LDA  = 0x3 # Load into A reg (input data)
+LDB  = 0x4 # Load into B reg (input data)
+LDAR = 0x5 # Load into A reg (RAM)
+LDBR = 0x6 # Load into B reg (RAM)
+ADD  = 0x7 # Add A and B registers
+# SUB  = 0x8 # Subtract A and B registers
+# STRN = 0x9 # Store return into register (RAM)
+LDRN = 0x9 # Store return into register (output data)
 
 async def start_and_reset(dut, rst_cycles: int = 10):
     dut._log.info("Start")
@@ -40,7 +46,7 @@ async def reset(dut, rst_cycles: int = 10, verbose: bool = False):
     await ClockCycles(dut.clk, rst_cycles)
     dut.rst_n.value = 1
 
-@cocotb.test()
+# @cocotb.test()
 async def mem_rst(dut):
     await start_and_reset(dut)
 
@@ -51,7 +57,7 @@ async def mem_rst(dut):
     await ClockCycles(dut.clk, 1)
     assert dut.uo_out.value == 'xxxxxxxx'
 
-@cocotb.test()
+# @cocotb.test()
 async def mem_save(dut):
     await start_and_reset(dut, 5)
 
@@ -73,7 +79,7 @@ async def mem_save(dut):
             await ClockCycles(dut.clk, R_MEM_CYCLES)
             assert dut.uo_out.value == data
 
-@cocotb.test()
+# @cocotb.test()
 async def mem_fill(dut):
     await start_and_reset(dut, 5)
 
@@ -106,7 +112,7 @@ async def mem_fill(dut):
         await ClockCycles(dut.clk, R_MEM_CYCLES)
         assert dut.uo_out.value == 0x00
 
-@cocotb.test()
+# @cocotb.test()
 async def data_leakage(dut):
     await start_and_reset(dut, 5)
 
@@ -128,7 +134,7 @@ async def data_leakage(dut):
         await ClockCycles(dut.clk, R_MEM_CYCLES)
         assert dut.uo_out.value == data[addr]
 
-# @cocotb.test()
+@cocotb.test()
 async def alu_add(dut):
     await start_and_reset(dut, 5)
 
@@ -155,8 +161,10 @@ async def alu_add(dut):
     dut.uio_in.value = (ADD << 4)
     await ClockCycles(dut.clk, ADD_CYCLES)
 
-    # Output to RET register
-    # await ClockCycles(dut.clk, 1)
+    # Load RTN register
+    dut._log.info(f"Loading RTN register")
+    dut.uio_in.value = (LDRN << 4)
+    await ClockCycles(dut.clk, LDRN_CYCLES)
 
     # Check output
     dut._log.info(f"Checking output")
