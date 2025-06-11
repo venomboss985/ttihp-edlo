@@ -28,19 +28,20 @@
 
 ## PRIORITY
 - [ ] ALU
-    - [ ] Working `ADD` instruction
-    - [ ] Working `SUB` instruction
+    - [x] Working `ADD` instruction
+    - [x] Working `SUB` instruction
     - [ ] Store return buffer into RAM from input address instruction (after operation clock cycles)
 - [ ] Update tests for pulsed `we`?
 
 ## BACKLOG
 - [ ] ALU
-    - [ ] 4-bit instruction input
-    - [ ] A, B, and Return registers
-    - [ ] Load/store A/B instruction
-    - [ ] Load/store Return instruction
-    - [ ] Addition instruction (consider carry/overflow bit)
-    - [ ] Subtraction instruction (consider carry/overflow bit)
+    - [x] 4-bit instruction input
+    - [x] A, B, and Return registers
+    - [x] Store into A/B instruction
+    - [x] Load RTN instruction
+    - [ ] Store RTN instruction
+    - [x] Addition instruction (consider carry/overflow bit)
+    - [x] Subtraction instruction (consider carry/overflow bit)
 
 ## OPTIONAL
 - [ ] Works at higher clock speeds (aim for 1MHz)
