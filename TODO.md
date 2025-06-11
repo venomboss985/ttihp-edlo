@@ -27,11 +27,10 @@
 - [ ] Good docs
 
 ## PRIORITY
-- [x] Create modular addresable memory
-    - [x] Make parametric
-    - [x] Up to 4-bit address input
-    - [x] 8-bit data input
-    - [x] Account for clock cycle delays
+- [ ] ALU
+    - [ ] Working `ADD` instruction
+    - [ ] Working `SUB` instruction
+    - [ ] Store return buffer into RAM from input address instruction (after operation clock cycles)
 - [ ] Update tests for pulsed `we`?
 
 ## BACKLOG
