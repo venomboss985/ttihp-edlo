@@ -6,8 +6,6 @@ from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 import random
 
-READ_MODE = 0b0
-WRITE_MODE = 0b1
 ADDR_BITS = 4
 MEMORY_CELLS = 2**ADDR_BITS
 
@@ -17,9 +15,12 @@ LDAB_CYCLES = 2
 ADD_CYCLES = 1
 
 NOP = 0x0
-LDA = 0x1
-LDB = 0x2
-ADD = 0x3
+STR = 0x1
+LDR = 0x2
+LDA = 0x3
+LDB = 0x4
+ADD = 0x5
+SUB = 0x6
 
 async def start_and_reset(dut, rst_cycles: int = 10):
     dut._log.info("Start")
@@ -39,18 +40,18 @@ async def reset(dut, rst_cycles: int = 10, verbose: bool = False):
     await ClockCycles(dut.clk, rst_cycles)
     dut.rst_n.value = 1
 
-# @cocotb.test()
+@cocotb.test()
 async def mem_rst(dut):
     await start_and_reset(dut)
 
     dut._log.info("Testing reset memory")
 
-    dut.uio_in.value = 0b000
-    dut.ui_in.value = 0b00000000
+    dut.uio_in.value = 0x00
+    dut.ui_in.value = 0x00
     await ClockCycles(dut.clk, 1)
     assert dut.uo_out.value == 'xxxxxxxx'
 
-# @cocotb.test()
+@cocotb.test()
 async def mem_save(dut):
     await start_and_reset(dut, 5)
 
@@ -63,16 +64,16 @@ async def mem_save(dut):
 
             # Load data in memory
             # dut._log.info(f"Data: {bin(data)}")
-            dut.uio_in.value = (WRITE_MODE << ADDR_BITS) | addr
+            dut.uio_in.value = (STR << ADDR_BITS) | addr
             dut.ui_in.value = data
             await ClockCycles(dut.clk, W_MEM_CYCLES)
 
             # Get data out from memory
-            dut.uio_in.value = (READ_MODE << ADDR_BITS) | addr
+            dut.uio_in.value = (LDR << ADDR_BITS) | addr
             await ClockCycles(dut.clk, R_MEM_CYCLES)
             assert dut.uo_out.value == data
 
-# @cocotb.test()
+@cocotb.test()
 async def mem_fill(dut):
     await start_and_reset(dut, 5)
 
@@ -81,13 +82,13 @@ async def mem_fill(dut):
         dut._log.info(f"Testing mem{addr} fill")
 
         dut._log.info(f"Setting mem{addr}")
-        dut.uio_in.value = (WRITE_MODE << ADDR_BITS) | addr
+        dut.uio_in.value = (STR << ADDR_BITS) | addr
         dut.ui_in.value = 0xFF
         await ClockCycles(dut.clk, W_MEM_CYCLES)
     
         dut._log.info(f"Reading mem{addr}")
         dut.ui_in.value = 0x00
-        dut.uio_in.value = (READ_MODE << ADDR_BITS) | addr
+        dut.uio_in.value = (LDR << ADDR_BITS) | addr
         await ClockCycles(dut.clk, R_MEM_CYCLES)
         assert dut.uo_out.value == 0xFF
 
@@ -95,17 +96,17 @@ async def mem_fill(dut):
         dut._log.info(f"Testing mem{addr} empty")
         
         dut._log.info(f"Resetting mem{addr}")
-        dut.uio_in.value = (WRITE_MODE << ADDR_BITS) | addr
+        dut.uio_in.value = (STR << ADDR_BITS) | addr
         dut.ui_in.value = 0x00
         await ClockCycles(dut.clk, W_MEM_CYCLES)
     
         dut._log.info(f"Reading mem{addr}")
         dut.ui_in.value = 0x00
-        dut.uio_in.value = (READ_MODE << ADDR_BITS) | addr
+        dut.uio_in.value = (LDR << ADDR_BITS) | addr
         await ClockCycles(dut.clk, R_MEM_CYCLES)
         assert dut.uo_out.value == 0x00
 
-# @cocotb.test()
+@cocotb.test()
 async def data_leakage(dut):
     await start_and_reset(dut, 5)
 
@@ -114,8 +115,8 @@ async def data_leakage(dut):
     dut._log.info(f"Filling memory with random values")
     for addr in range(MEMORY_CELLS):
         # Fill memory cells
-        dut._log.info(f"Setting mem{addr} to 0x{data[addr]:2x}")
-        dut.uio_in.value = (WRITE_MODE << ADDR_BITS) | addr
+        dut._log.info(f"Setting mem{addr} to 0x{data[addr]:02x}")
+        dut.uio_in.value = (STR << ADDR_BITS) | addr
         dut.ui_in.value = data[addr]
         await ClockCycles(dut.clk, W_MEM_CYCLES)
     
@@ -123,11 +124,11 @@ async def data_leakage(dut):
         dut._log.info(f"Reading mem{addr}")
     
         dut.ui_in.value = 0x00
-        dut.uio_in.value = (READ_MODE << ADDR_BITS) | addr
+        dut.uio_in.value = (LDR << ADDR_BITS) | addr
         await ClockCycles(dut.clk, R_MEM_CYCLES)
         assert dut.uo_out.value == data[addr]
 
-@cocotb.test()
+# @cocotb.test()
 async def alu_add(dut):
     await start_and_reset(dut, 5)
 
