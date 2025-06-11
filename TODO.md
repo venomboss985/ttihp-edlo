@@ -16,14 +16,15 @@
     * Might need a memory controller after all... :(
 * ALU
     * MAYBE need to separate the registers from the logic to make architecting easier to manage
+    * Carry flag?
+    * Overflow flag?
 
 ## MVP
 - [ ] Target specs
     - 8-bit data IO
     - >8 bytes addressable RAM
     - 4KHz input clock
-- [ ] Recursive instructions
-- [ ] Automatic A/B registering
+- [ ] Recursive instructions?
 - [ ] Good docs
 
 ## PRIORITY
@@ -31,22 +32,20 @@
     - [x] Working `ADD` instruction
     - [x] Working `SUB` instruction
     - [ ] Store return buffer into RAM from input address instruction (after operation clock cycles)
-- [ ] Update tests for pulsed `we`?
 
 ## BACKLOG
 - [ ] ALU
-    - [x] 4-bit instruction input
-    - [x] A, B, and Return registers
-    - [x] Store into A/B instruction
-    - [x] Load RTN instruction
     - [ ] Store RTN instruction
-    - [x] Addition instruction (consider carry/overflow bit)
-    - [x] Subtraction instruction (consider carry/overflow bit)
+- [ ] Tests
+    - [ ] Store addition into RAM
+    - [ ] Subtract 2 numbers from RAM
+    - [ ] Store 4 numbers into RAM, add them both together, store the subtracted 2 new values, and load the last value from RAM
 
 ## OPTIONAL
 - [ ] Works at higher clock speeds (aim for 1MHz)
 - [ ] Selected address always output on `uo_out` pins
 - [ ] Works on FPGA
+- [ ] Update tests for pulsed `we`?
 
 ### Ideas
 - [ ] Signed/unsigned instruction flag
