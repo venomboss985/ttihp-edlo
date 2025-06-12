@@ -28,14 +28,14 @@
 - [ ] Good docs
 
 ## PRIORITY
-- [ ] ALU
+- [x] ALU
     - [x] Working `ADD` instruction
     - [x] Working `SUB` instruction
-    - [ ] Store return buffer into RAM from input address instruction (after operation clock cycles)
+    - [x] Store return buffer into RAM from input address instruction (after operation clock cycles)
 
 ## BACKLOG
-- [ ] ALU
-    - [ ] Store RTN instruction
+- [x] ALU
+    - [x] Store RTN instruction
 - [ ] Tests
     - [ ] Store addition into RAM
     - [ ] Subtract 2 numbers from RAM

@@ -12,12 +12,13 @@ module memory_controller #(parameter ADDR_BITS = 2) (
   output      [7:0]           mem_out
 );
   reg [7:0] out_buf;
+  wire [7:0] mem_bus;
   wire mem_we;
 
   memory_block #(.ADDR_BITS(ADDR_BITS)) ram (
     .clock (clock),
     .addr (addr),
-    .d_in (data_in),
+    .d_in (mem_bus),
     .d_out (mem_out),
     .we (mem_we)
   );
@@ -27,13 +28,14 @@ module memory_controller #(parameter ADDR_BITS = 2) (
       out_buf = 'x;
     end else begin
       case (inst)
-        'h2, 'h3: out_buf = mem_out;
-        'h9: out_buf = mem_in;
+        'h2, 'h3, 'h4, 'h5, 'h6: out_buf = mem_out;
+        'ha: out_buf = mem_in;
       endcase
     end
   end
 
-  assign mem_we = inst == 'h1;
+  assign mem_bus = (inst == 'h9) ? mem_in : data_in;
+  assign mem_we = inst == 'h1 || inst == 'h9;
   assign data_out = out_buf;
 
 endmodule
@@ -53,4 +55,5 @@ module memory_block #(parameter ADDR_BITS = 2) (
   end
   
   assign d_out = mem[addr];
+
 endmodule

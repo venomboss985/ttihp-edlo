@@ -22,12 +22,11 @@ module tt_um_venom_edlo (
 
   alu_module ALU (
     .clock (clk),
-    // .reset (rst_n),
+    .reset (rst_n),
     .data_in (input_bus),
     .ram_in (ram_bus),
     .RTN (rtn_bus),
     .INST (uio_in[7:4])
-    // .busy (alu_busy)
   );
 
   localparam ADDR_BITS = 4;
