@@ -35,18 +35,20 @@
     - [ ] Gate level testing?
 - [ ] Clock speed in `config.json` significance? (likely just for documentation)
 - [ ] Research submission details
-- [ ] Update README
+- [x] Update README
 - [ ] Update `docs/` page
 
 ## BACKLOG
-- [ ] Program counter research
-- [ ] Research OP flags use cases?
+- [ ] Research program counter
+- [ ] Research OP flags
 - [ ] Additional instructions?
     - Multiply?
     - Divide?
     - LSH/RSH for A/B registers? (maybe even return register?)
-- [ ] Use `define` statements
-- [ ] Use `*.vh` file
+- [ ] Project cleanup
+    - [ ] Fix whitespace and tabspace
+    - [ ] Use `define` statements
+    - [ ] Use `*.vh` file
 
 ## VIDEOS
 - [ ] Introduction: What is Tiny Tapeout?
@@ -66,5 +68,6 @@
 - [ ] Build a compiler and assembly language?
 
 ## RETIRED
+- Recursive instructions
 
 ## REVISIT

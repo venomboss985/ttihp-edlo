@@ -25,7 +25,7 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: "DATA_IN0" # data input
+  ui[0]: "DATA_IN0"
   ui[1]: "DATA_IN1"
   ui[2]: "DATA_IN2"
   ui[3]: "DATA_IN3"
@@ -35,7 +35,7 @@ pinout:
   ui[7]: "DATA_IN7"
 
   # Outputs
-  uo[0]: "ADDR_D0" # address memory data
+  uo[0]: "ADDR_D0"
   uo[1]: "ADDR_D1"
   uo[2]: "ADDR_D2"
   uo[3]: "ADDR_D3"
@@ -45,14 +45,14 @@ pinout:
   uo[7]: "ADDR_D7"
 
   # Bidirectional pins
-  uio[0]: "ADDR_IN0" # address select
+  uio[0]: "ADDR_IN0"
   uio[1]: "ADDR_IN1"
   uio[2]: "ADDR_IN2"
   uio[3]: "ADDR_IN3"
-  uio[4]: "WE" # write enable
-  uio[5]: ""
-  uio[6]: ""
-  uio[7]: ""
+  uio[4]: "INST_IN0"
+  uio[5]: "INST_IN1"
+  uio[6]: "INST_IN2"
+  uio[7]: "INST_IN3"
 
 # Do not change!
 yaml_version: 6
