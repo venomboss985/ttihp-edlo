@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2024 Your Name
+ * Copyright (c) 2024 Jake T.
  * SPDX-License-Identifier: Apache-2.0
  */
 
 `default_nettype none
+// `timescale 1ns / 1ps
 
-module tt_um_example (
+module tt_um_venom_edlo (
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
     input  wire [7:0] uio_in,   // IOs: Input path
@@ -15,9 +16,40 @@ module tt_um_example (
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
+  wire [7:0] input_bus;
+  wire [7:0] ram_bus;
+  wire [7:0] rtn_bus;
+
+  alu_module ALU (
+    .clock (clk),
+    .reset (rst_n),
+    .data_in (input_bus),
+    .ram_in (ram_bus),
+    .RTN (rtn_bus),
+    .INST (uio_in[7:4])
+  );
+
+  localparam ADDR_BITS = 4;
+  memory_controller #(.ADDR_BITS(ADDR_BITS)) mem_ctrl (
+    .clock (clk),
+    .addr (uio_in[3:0]),
+    .data_in (input_bus),
+    .data_out (uo_out),
+    .inst (uio_in[7:4]),
+
+    .mem_in (rtn_bus),
+    .mem_out (ram_bus)
+  );
+
+  always @(posedge clk) begin
+    if (rst_n == 0) begin
+      // Reset logic here
+    end
+  end
+
+  assign input_bus = ui_in;
 
   // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out  = ui_in + uio_in;  // Example: ou_out is the sum of ui_in and uio_in
   assign uio_out = 0;
   assign uio_oe  = 0;
 
