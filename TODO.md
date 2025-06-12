@@ -25,7 +25,7 @@
     - 4KHz input clock
     - Can perform basic addition and subtraction
     - Data can be stored and retrieved from memory
-- [ ] Good docs
+- [ ] Good enough docs
 
 ## PRIORITY
 - [ ] Tests
@@ -44,6 +44,8 @@
     - Multiply?
     - Divide?
     - LSH/RSH for A/B registers? (maybe even return register?)
+- [ ] Use `define` statements
+- [ ] Use `*.vh` file
 
 ## VIDEOS
 - [ ] Introduction: What is Tiny Tapeout?
@@ -59,8 +61,6 @@
     * Common pitfalls and errors
 
 ## OPTIONAL
-- [ ] Works at higher clock speeds (aim for 1MHz)
-- [X] Selected address always output on `uo_out` pins
 - [ ] Works on FPGA
 - [ ] Build a compiler and assembly language?
 
