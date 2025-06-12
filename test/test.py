@@ -15,7 +15,7 @@ LDAB_CYCLES = 2
 ADD_CYCLES = 2
 SUB_CYCLES = 2
 LDRN_CYCLES = 2
-STRN_CYCLES = 2
+STRN_CYCLES = 1
 
 NOP  = 0x0 # No operation
 STR  = 0x1 # Store in register (RAM)
