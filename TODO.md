@@ -2,7 +2,6 @@
 
 ### Notes
 * Memory module
-    * Current memory module failed during leakage test, but due to needing clock signal, was rather space efficient
     * Tested area use with different configurations (@16B)
         * `always @(posedge clock) if (we)`: Keeps current function, but very inefficient
         * `always @(posedge we)`: Changed `we` to pulsed signal and very inefficient
@@ -20,37 +19,50 @@
     * Overflow flag?
 
 ## MVP
-- [ ] Target specs
+- [x] Target specs
     - 8-bit data IO
-    - >8 bytes addressable RAM
+    - >=8 bytes addressable RAM
     - 4KHz input clock
-- [ ] Recursive instructions?
+    - Can perform basic addition and subtraction
+    - Data can be stored and retrieved from memory
 - [ ] Good docs
 
 ## PRIORITY
-- [x] ALU
-    - [x] Working `ADD` instruction
-    - [x] Working `SUB` instruction
-    - [x] Store return buffer into RAM from input address instruction (after operation clock cycles)
-
-## BACKLOG
-- [x] ALU
-    - [x] Store RTN instruction
 - [ ] Tests
     - [ ] Store addition into RAM
     - [ ] Subtract 2 numbers from RAM
     - [ ] Store 4 numbers into RAM, add them both together, store the subtracted 2 new values, and load the last value from RAM
+- [ ] Clock speed in `config.json` significance? (likely just for documentation)
+- [ ] Research submission details
+- [ ] Update README
+- [ ] Update `docs/` page
+
+## BACKLOG
+- [ ] Program counter research
+- [ ] Research OP flags use cases?
+- [ ] Additional instructions?
+    - Multiply?
+    - Divide?
+    - LSH/RSH for A/B registers? (maybe even return register?)
+
+## VIDEOS
+- [ ] Introduction: What is Tiny Tapeout?
+    * What are ASICs and what can they do?
+    * What is TT and what is the shuttle program?
+    * Who is "printing" the chips?
+- [ ] Environment setup
+    * Prerequisite knowledge?
+    * Software to install
+    * Dev container setup (for local hardening)
+- [ ] Simple Verilog tutorial
+    * Creating the Polygate :tm:
+    * Common pitfalls and errors
 
 ## OPTIONAL
 - [ ] Works at higher clock speeds (aim for 1MHz)
-- [ ] Selected address always output on `uo_out` pins
+- [X] Selected address always output on `uo_out` pins
 - [ ] Works on FPGA
-- [ ] Update tests for pulsed `we`?
-
-### Ideas
-- [ ] Signed/unsigned instruction flag
-- [ ] Done flag
-
+- [ ] Build a compiler and assembly language?
 
 ## RETIRED
 
