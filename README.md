@@ -8,9 +8,69 @@
 
 The Experimental Direct Logical Operator (EDLO) chip is a CPU-like IC that can perform a couple arithmetic operations and has it's own RAM for data storage. It's nothing special, but for a first proper Tiny Tapeout project, it turned out much better (and more fun) than I originally anticipated, especially since my experience does not come from being as low level as assembly.
 
-![](latest.svg)
+![](latest.png)
 
 This project was heavily inspired by Ben Eater's breadboard computer (something I will eventually build myself when I get an oscilloscope), but does not function the same as there are a LOT of things missing from the original project and lots of changes had to be made to satisfy Yosys (looking at you bidirectional wires).
+
+### Architecture
+
+```mermaid
+graph 
+    INPUT_BUS[Input Bus] == [7:0] ==> CTRL_IN
+    INPUT_BUS == [7:0] ==> DATA_IN
+    RAM_BUS[RAM Bus] == [7:0] ==> RAM_IN
+    RTN_BUS[Return Bus] == [7:0] ==> MEM_IN
+    
+    subgraph MEMORY CONTROLLER
+        CTRL_CLK[Clock]
+        CTRL_RST[Reset]
+
+        CTRL_IN[Data Input] == [7:0] ==> CELL_IN
+        CTRL_OUT[Data Output] == [7:0] ==> uo_out
+        CTRL_ADDR[Address Input] == [7:0] ==> CELL_ADDR 
+        CTRL_INST[Instruction Input]
+
+        MEM_IN[Memory Data Input] ==> CELL_IN
+        MEM_OUT[Memory Data Output] ==> RAM_BUS
+        
+        subgraph MEMORY CELLS
+            CELL_IN[Cell Input]
+            CELL_OUT[Cell Output] == [7:0] ==> MEM_OUT
+            CELL_ADDR[Cell Address]
+        end
+    end
+    
+    subgraph ALU MODULE
+        ALU_CLK[Clock]
+        ALU_RST[Reset]
+
+        DATA_IN[TT Data Input] == [7:0] ==> A_REG
+        RAM_IN[RAM Data Input] == [7:0] ==> A_REG
+        ALU_INST[Instruction Input] == [3:0] ==> A_REG
+        
+        DATA_IN == [7:0] ==> B_REG
+        RAM_IN == [7:0] ==> B_REG
+        ALU_INST == [3:0] ==> B_REG
+
+        A_REG[A Register] == [7:0] ==> RTN_REG
+        B_REG[B Register] == [7:0] ==> RTN_REG
+
+        RTN_REG[Return Register] == [7:0] ==> RTN_BUS
+    end
+    
+    subgraph IO
+        CLK[TT Clock] --> ALU_CLK
+        CLK --> CTRL_CLK
+        RST[TT Reset] --> ALU_RST
+        RST --> CTRL_RST
+
+        ui_in[TT Input] == [7:0] ==> INPUT_BUS
+        uo_out[TT Output]
+        uio_in[TT Bidirectional Input] == [7:4] ==> CTRL_INST
+        uio_in == [7:4] ==> ALU_INST
+        uio_in == [3:0] ==> CTRL_ADDR
+    end
+```
 
 ### Specs
 - 1x1 tile space
