@@ -21,11 +21,14 @@
 ## MVP
 - [x] Target specs
     - 8-bit data IO
-    - >=8 bytes addressable RAM
+    - \>=8 bytes addressable RAM
     - 4KHz input clock
     - Can perform basic addition and subtraction
     - Data can be stored and retrieved from memory
 - [ ] Good enough docs
+    - Describe project
+    - Usage docs (in `docs/` folder)
+    - Block diagram of circuit
 
 ## PRIORITY
 - [ ] Tests
@@ -36,17 +39,18 @@
 - [ ] Clock speed in `config.json` significance? (likely just for documentation)
 - [ ] Research submission details
 - [x] Update README
-- [ ] Update `docs/` page
+- [ ] Update `docs/info.md` page
 
 ## BACKLOG
-- [ ] Research program counter
-- [ ] Research OP flags
+- [x] ~~Research program counter~~
+- [x] ~~Research OP flags~~
 - [ ] Additional instructions?
     - Multiply?
     - Divide?
     - LSH/RSH for A/B registers? (maybe even return register?)
 - [ ] Project cleanup
     - [ ] Fix whitespace and tabspace
+    - [ ] Fix comments
     - [ ] Use `define` statements
     - [ ] Use `*.vh` file
 
@@ -71,3 +75,4 @@
 - Recursive instructions
 
 ## REVISIT
+- Memory cells
