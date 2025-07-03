@@ -150,24 +150,24 @@ async def alu_add(dut):
     # Load number into A register
     dut._log.info(f"Loading {a_reg} into A register")
     dut.ui_in.value = a_reg
-    dut.uio_in.value = (LDA << 4)
+    dut.uio_in.value = (LDA << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
     # Load number into B register
     dut._log.info(f"Loading {b_reg} into B register")
     dut.ui_in.value = b_reg
-    dut.uio_in.value = (LDB << 4)
+    dut.uio_in.value = (LDB << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
     # Add A and B registers
     dut._log.info(f"Adding registers")
     dut.ui_in.value = 0x00
-    dut.uio_in.value = (ADD << 4)
+    dut.uio_in.value = (ADD << ADDR_BITS)
     await ClockCycles(dut.clk, ADD_CYCLES)
 
     # Load RTN register
     dut._log.info(f"Loading RTN register")
-    dut.uio_in.value = (LDRN << 4)
+    dut.uio_in.value = (LDRN << ADDR_BITS)
     await ClockCycles(dut.clk, LDRN_CYCLES)
 
     # Check output
@@ -188,24 +188,24 @@ async def alu_sub(dut):
     # Load number into A register
     dut._log.info(f"Loading {a_reg} into A register")
     dut.ui_in.value = a_reg
-    dut.uio_in.value = (LDA << 4)
+    dut.uio_in.value = (LDA << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
     # Load number into B register
     dut._log.info(f"Loading {b_reg} into B register")
     dut.ui_in.value = b_reg
-    dut.uio_in.value = (LDB << 4)
+    dut.uio_in.value = (LDB << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
     # Subtract A and B registers
     dut._log.info(f"Subtracting registers")
     dut.ui_in.value = 0x00
-    dut.uio_in.value = (SUB << 4)
+    dut.uio_in.value = (SUB << ADDR_BITS)
     await ClockCycles(dut.clk, SUB_CYCLES)
 
     # Load RTN register
     dut._log.info(f"Loading RTN register")
-    dut.uio_in.value = (LDRN << 4)
+    dut.uio_in.value = (LDRN << ADDR_BITS)
     await ClockCycles(dut.clk, LDRN_CYCLES)
 
     # Check output
@@ -227,29 +227,29 @@ async def alu_strn(dut):
     # Load number into A register
     dut._log.info(f"Loading {a_reg} into A register")
     dut.ui_in.value = a_reg
-    dut.uio_in.value = (LDA << 4)
+    dut.uio_in.value = (LDA << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
     # Load number into B register
     dut._log.info(f"Loading {b_reg} into B register")
     dut.ui_in.value = b_reg
-    dut.uio_in.value = (LDB << 4)
+    dut.uio_in.value = (LDB << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
-    # Subtract A and B registers
+    # Add A and B registers
     dut._log.info(f"Adding registers")
     dut.ui_in.value = 0x00
-    dut.uio_in.value = (ADD << 4)
-    await ClockCycles(dut.clk, SUB_CYCLES)
+    dut.uio_in.value = (ADD << ADDR_BITS)
+    await ClockCycles(dut.clk, ADD_CYCLES)
 
     # Store RTN register into RAM
     dut._log.info(f"Storing result into RAM")
-    dut.uio_in.value = (STRN << 4) | addr
+    dut.uio_in.value = (STRN << ADDR_BITS) | addr
     await ClockCycles(dut.clk, STRN_CYCLES)
 
     # Check RAM
     dut._log.info(f"Loading RAM")
-    dut.uio_in.value = (LDR << 4) | addr
+    dut.uio_in.value = (LDR << ADDR_BITS) | addr
     await ClockCycles(dut.clk, LDR_CYCLES)
     assert dut.uo_out.value == result
 
