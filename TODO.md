@@ -36,23 +36,15 @@
     - [ ] Subtract 2 numbers from RAM
     - [ ] Store 4 numbers into RAM, add them both together, store the subtracted 2 new values, and load the last value from RAM
     - [ ] Gate level testing?
-- [ ] Clock speed in `config.json` significance? (likely just for documentation)
+- [x] ~~Clock speed in `config.json` significance?~~ (likely just for documentation)
 - [ ] Research submission details
-- [x] Update README
 - [ ] Update `docs/info.md` page
 
 ## BACKLOG
-- [x] ~~Research program counter~~
-- [x] ~~Research OP flags~~
 - [ ] Additional instructions?
     - Multiply?
     - Divide?
     - LSH/RSH for A/B registers? (maybe even return register?)
-- [x] Project cleanup
-    - [x] Fix whitespace and tabspace
-    - [x] Fix comments
-    - [x] Use `define` statements
-    - [x] Use "definitions" header file
 
 ## VIDEOS
 - [ ] Introduction: What is Tiny Tapeout?
