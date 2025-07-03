@@ -1,4 +1,5 @@
 `default_nettype none
+`include "define.v"
 
 module alu_module (
   input  wire       clock,
@@ -8,8 +9,10 @@ module alu_module (
   output reg  [7:0] RTN,
   input       [3:0] INST
 );
+  // Internal A/B registers
   reg [7:0] A, B;
 
+  // Run instruction every clock cycle
   always @(posedge clock) begin
     if (reset == 0) begin
       A = 'x;
@@ -17,12 +20,12 @@ module alu_module (
       RTN = 'x;
     end else begin
       case (INST)
-        'h3: A = data_in;
-        'h4: B = data_in;
-        'h5: A = ram_in;
-        'h6: B = ram_in;
-        'h7: RTN = A + B;
-        'h8: RTN = A - B;
+        `LDA: A = data_in;
+        `LDB: B = data_in;
+        `LDAR: A = ram_in;
+        `LDBR: B = ram_in;
+        `ADD: RTN = A + B;
+        `SUB: RTN = A - B;
       endcase
     end
   end

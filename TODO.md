@@ -48,11 +48,11 @@
     - Multiply?
     - Divide?
     - LSH/RSH for A/B registers? (maybe even return register?)
-- [ ] Project cleanup
-    - [ ] Fix whitespace and tabspace
-    - [ ] Fix comments
-    - [ ] Use `define` statements
-    - [ ] Use `*.vh` file
+- [x] Project cleanup
+    - [x] Fix whitespace and tabspace
+    - [x] Fix comments
+    - [x] Use `define` statements
+    - [x] Use "definitions" header file
 
 ## VIDEOS
 - [ ] Introduction: What is Tiny Tapeout?

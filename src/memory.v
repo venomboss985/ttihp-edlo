@@ -1,4 +1,5 @@
 `default_nettype none
+`include "define.v"
 
 module memory_controller #(parameter ADDR_BITS = 2) (
   input  wire                 clock,
@@ -11,10 +12,12 @@ module memory_controller #(parameter ADDR_BITS = 2) (
   input       [7:0]           mem_in,
   output      [7:0]           mem_out
 );
+  // Internal wire/buffers
   reg [7:0] out_buf;
   wire [7:0] mem_bus;
   wire mem_we;
 
+  // RAM instance
   memory_block #(.ADDR_BITS(ADDR_BITS)) ram (
     .clock (clock),
     .addr (addr),
@@ -23,19 +26,21 @@ module memory_controller #(parameter ADDR_BITS = 2) (
     .we (mem_we)
   );
 
+  // Run instruction every clock cycle
   always @(posedge clock) begin
     if (reset == 0) begin
       out_buf = 'x;
     end else begin
       case (inst)
-        'h2, 'h3, 'h4, 'h5, 'h6: out_buf = mem_out;
-        'ha: out_buf = mem_in;
+        `LDR, `LDA, `LDB, `LDAR, `LDBR: out_buf = mem_out;
+        `LDRN: out_buf = mem_in;
       endcase
     end
   end
 
-  assign mem_bus = (inst == 'h9) ? mem_in : data_in;
-  assign mem_we = inst == 'h1 || inst == 'h9;
+  // Internal wire/buffer assignments
+  assign mem_bus = (inst == `STRN) ? mem_in : data_in;
+  assign mem_we = inst == `STR || inst == `STRN;
   assign data_out = out_buf;
 
 endmodule
@@ -47,13 +52,16 @@ module memory_block #(parameter ADDR_BITS = 2) (
   output wire [7:0]           d_out,
   input  wire                 we
 );
+  // Memory cells
   reg [7:0] mem [2**ADDR_BITS];
 
+  // Store input memory if write enable is high
   always @(posedge clock) begin
     if (we)
       mem[addr] = d_in;
   end
   
+  // Internal wire assignments
   assign d_out = mem[addr];
 
 endmodule
