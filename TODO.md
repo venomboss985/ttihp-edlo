@@ -31,16 +31,12 @@
     - Block diagram of circuit
 
 ## PRIORITY
-- [ ] Tests
-    - [x] Store addition into RAM
-    - [x] Subtract 2 numbers from RAM
-    - [x] Store 4 numbers into RAM, add 2 sets together, store the subtracted 2 new values, and load the final value from RAM
-    - [ ] Gate level testing?
 - [x] ~~Clock speed in `config.json` significance?~~ (likely just for documentation)
 - [ ] Research submission details
 - [x] Update `docs/info.md` page
 
 ## BACKLOG
+- [ ] Gate level testing?
 - [ ] Additional instructions?
     - Multiply?
     - Divide?
