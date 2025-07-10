@@ -14,6 +14,7 @@ LDR_CYCLES = 2
 LDAB_CYCLES = 2
 ADD_CYCLES = 2
 SUB_CYCLES = 2
+LDABR_CYCLES = 1
 LDRN_CYCLES = 2
 STRN_CYCLES = 1
 
@@ -149,24 +150,24 @@ async def alu_add(dut):
     # Load number into A register
     dut._log.info(f"Loading {a_reg} into A register")
     dut.ui_in.value = a_reg
-    dut.uio_in.value = (LDA << 4)
+    dut.uio_in.value = (LDA << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
     # Load number into B register
     dut._log.info(f"Loading {b_reg} into B register")
     dut.ui_in.value = b_reg
-    dut.uio_in.value = (LDB << 4)
+    dut.uio_in.value = (LDB << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
     # Add A and B registers
     dut._log.info(f"Adding registers")
     dut.ui_in.value = 0x00
-    dut.uio_in.value = (ADD << 4)
+    dut.uio_in.value = (ADD << ADDR_BITS)
     await ClockCycles(dut.clk, ADD_CYCLES)
 
     # Load RTN register
     dut._log.info(f"Loading RTN register")
-    dut.uio_in.value = (LDRN << 4)
+    dut.uio_in.value = (LDRN << ADDR_BITS)
     await ClockCycles(dut.clk, LDRN_CYCLES)
 
     # Check output
@@ -187,24 +188,24 @@ async def alu_sub(dut):
     # Load number into A register
     dut._log.info(f"Loading {a_reg} into A register")
     dut.ui_in.value = a_reg
-    dut.uio_in.value = (LDA << 4)
+    dut.uio_in.value = (LDA << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
     # Load number into B register
     dut._log.info(f"Loading {b_reg} into B register")
     dut.ui_in.value = b_reg
-    dut.uio_in.value = (LDB << 4)
+    dut.uio_in.value = (LDB << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
     # Subtract A and B registers
     dut._log.info(f"Subtracting registers")
     dut.ui_in.value = 0x00
-    dut.uio_in.value = (SUB << 4)
+    dut.uio_in.value = (SUB << ADDR_BITS)
     await ClockCycles(dut.clk, SUB_CYCLES)
 
     # Load RTN register
     dut._log.info(f"Loading RTN register")
-    dut.uio_in.value = (LDRN << 4)
+    dut.uio_in.value = (LDRN << ADDR_BITS)
     await ClockCycles(dut.clk, LDRN_CYCLES)
 
     # Check output
@@ -226,28 +227,153 @@ async def alu_strn(dut):
     # Load number into A register
     dut._log.info(f"Loading {a_reg} into A register")
     dut.ui_in.value = a_reg
-    dut.uio_in.value = (LDA << 4)
+    dut.uio_in.value = (LDA << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
     # Load number into B register
     dut._log.info(f"Loading {b_reg} into B register")
     dut.ui_in.value = b_reg
-    dut.uio_in.value = (LDB << 4)
+    dut.uio_in.value = (LDB << ADDR_BITS)
     await ClockCycles(dut.clk, LDAB_CYCLES)
 
-    # Subtract A and B registers
+    # Add A and B registers
     dut._log.info(f"Adding registers")
     dut.ui_in.value = 0x00
-    dut.uio_in.value = (ADD << 4)
-    await ClockCycles(dut.clk, SUB_CYCLES)
+    dut.uio_in.value = (ADD << ADDR_BITS)
+    await ClockCycles(dut.clk, ADD_CYCLES)
 
     # Store RTN register into RAM
     dut._log.info(f"Storing result into RAM")
-    dut.uio_in.value = (STRN << 4) | addr
+    dut.uio_in.value = (STRN << ADDR_BITS) | addr
     await ClockCycles(dut.clk, STRN_CYCLES)
 
     # Check RAM
     dut._log.info(f"Loading RAM")
-    dut.uio_in.value = (LDR << 4) | addr
+    dut.uio_in.value = (LDR << ADDR_BITS) | addr
+    await ClockCycles(dut.clk, LDR_CYCLES)
+    assert dut.uo_out.value == result
+
+@cocotb.test()
+async def mem_sub(dut):
+    await start_and_reset(dut, 5)
+
+    dut._log.info(f"Subtracting values from RAM")
+
+    # Inputs and expected outputs
+    addr1 = random.randint(0, 15)
+    addr2 = random.randint(0, 15)
+    a_reg = 209
+    b_reg = 155
+    result = a_reg - b_reg
+
+    # Store first number into RAM
+    dut._log.info(f"Storing 0x{a_reg:02x} into memory address {addr1}")
+    dut.ui_in.value = a_reg
+    dut.uio_in.value = (STR << ADDR_BITS) | addr1
+    await ClockCycles(dut.clk, STR_CYCLES)
+
+    # Store second number into RAM
+    dut._log.info(f"Storing 0x{b_reg:02x} into memory address {addr2}")
+    dut.ui_in.value = b_reg
+    dut.uio_in.value = (STR << ADDR_BITS) | addr2
+    await ClockCycles(dut.clk, STR_CYCLES)
+
+    # Load first number into A register
+    dut._log.info(f"Loading memory from {addr1} into A register")
+    dut.ui_in.value = a_reg
+    dut.uio_in.value = (LDAR << ADDR_BITS) | addr1
+    await ClockCycles(dut.clk, LDABR_CYCLES)
+
+    # Load second number into B register
+    dut._log.info(f"Loading memory from {addr2} into B register")
+    dut.ui_in.value = b_reg
+    dut.uio_in.value = (LDBR << ADDR_BITS) | addr2
+    await ClockCycles(dut.clk, LDABR_CYCLES)
+
+    # Subtract A and B registers
+    dut._log.info(f"Subtracting registers")
+    dut.ui_in.value = 0x00
+    dut.uio_in.value = (SUB << ADDR_BITS)
+    await ClockCycles(dut.clk, SUB_CYCLES)
+
+    # Check return value
+    dut._log.info(f"Checking return register")
+    dut.uio_in.value = (LDRN << ADDR_BITS)
+    await ClockCycles(dut.clk, LDRN_CYCLES)
+    assert dut.uo_out.value == result
+
+@cocotb.test()
+async def full_ops(dut):
+    await start_and_reset(dut, 5)
+
+    dut._log.info(f"Full operations test")
+
+    # Inputs and expected outputs
+    nums: list = [187, 34, 92, 56]
+    set1_result: int = nums[0] + nums[1]
+    set2_result: int = nums[2] + nums[3]
+    result: int = set1_result - set2_result
+
+    # Store numbers into memory
+    for addr in range(4):
+        dut._log.info(f"Storing {nums[addr]} into address {addr}")
+        dut.ui_in.value = nums[addr]
+        dut.uio_in.value = (STR << ADDR_BITS) | addr
+        await ClockCycles(dut.clk, STR_CYCLES)
+    dut.ui_in.value = 0
+
+    # Add set 1 together
+    dut._log.info(f"Adding first set")
+    dut.uio_in.value = (LDAR << ADDR_BITS) | 0x0
+    await ClockCycles(dut.clk, LDABR_CYCLES)
+    dut.uio_in.value = (LDBR << ADDR_BITS) | 0x1
+    await ClockCycles(dut.clk, LDABR_CYCLES)
+    dut.uio_in.value = (ADD << ADDR_BITS)
+    await ClockCycles(dut.clk, ADD_CYCLES)
+    dut._log.info(f"Storing sum into address 4")
+    dut.uio_in.value = (STRN << ADDR_BITS) | 0x4
+    await ClockCycles(dut.clk, STRN_CYCLES)
+
+    # Add set 2 together
+    dut._log.info(f"Adding second set")
+    dut.uio_in.value = (LDAR << ADDR_BITS) | 0x2
+    await ClockCycles(dut.clk, LDABR_CYCLES)
+    dut.uio_in.value = (LDBR << ADDR_BITS) | 0x3
+    await ClockCycles(dut.clk, LDABR_CYCLES)
+    dut.uio_in.value = (ADD << ADDR_BITS)
+    await ClockCycles(dut.clk, ADD_CYCLES)
+    dut._log.info(f"Storing sum into address 5")
+    dut.uio_in.value = (STRN << ADDR_BITS) | 0x5
+    await ClockCycles(dut.clk, STRN_CYCLES)
+
+    # Check set 1 results from operation
+    dut._log.info(f"Checking first set results")
+    dut.uio_in.value = (LDR << ADDR_BITS) | 0x4
+    await ClockCycles(dut.clk, LDR_CYCLES)
+    assert dut.uo_out.value == set1_result
+
+    # Check set 2 results from operation
+    dut._log.info(f"Checking second set results")
+    dut.uio_in.value = (LDR << ADDR_BITS) | 0x5
+    await ClockCycles(dut.clk, LDR_CYCLES)
+    assert dut.uo_out.value == set2_result
+
+    # Subtract each set's results
+    dut._log.info(f"Subtracting first set results from second set results")
+    dut.uio_in.value = (LDAR << ADDR_BITS) | 0x4
+    await ClockCycles(dut.clk, LDABR_CYCLES)
+    dut.uio_in.value = (LDBR << ADDR_BITS) | 0x5
+    await ClockCycles(dut.clk, LDABR_CYCLES)
+    dut.uio_in.value = (SUB << ADDR_BITS)
+    await ClockCycles(dut.clk, SUB_CYCLES)
+
+    # Store into RAM
+    dut._log.info(f"Storing results into memory")
+    dut.uio_in.value = (STRN << ADDR_BITS) | 0x6
+    await ClockCycles(dut.clk, STRN_CYCLES)
+
+    # Check final results
+    dut._log.info(f"Outputting final results")
+    dut.uio_in.value = (LDR << ADDR_BITS) | 0x6
     await ClockCycles(dut.clk, LDR_CYCLES)
     assert dut.uo_out.value == result

@@ -1,0 +1,12 @@
+// Instruction definitions
+`define NOP  'h0
+`define STR  'h1
+`define LDR  'h2
+`define LDA  'h3
+`define LDB  'h4
+`define LDAR 'h5
+`define LDBR 'h6
+`define ADD  'h7
+`define SUB  'h8
+`define STRN 'h9
+`define LDRN 'hA

@@ -8,9 +8,14 @@
 
 The Experimental Direct Logical Operator (EDLO) chip is a CPU-like IC that can perform a couple arithmetic operations and has it's own RAM for data storage. It's nothing special, but for a first proper Tiny Tapeout project, it turned out much better (and more fun) than I originally anticipated, especially since my experience does not come from being as low level as assembly.
 
-![](latest.svg)
+![](latest.png)
 
 This project was heavily inspired by Ben Eater's breadboard computer (something I will eventually build myself when I get an oscilloscope), but does not function the same as there are a LOT of things missing from the original project and lots of changes had to be made to satisfy Yosys (looking at you bidirectional wires).
+
+### Architecture
+
+![](docs/architecture.png)
+*Hand drawn because I'm bad with graphic design*
 
 ### Specs
 - 1x1 tile space
