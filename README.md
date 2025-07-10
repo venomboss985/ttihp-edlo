@@ -19,7 +19,7 @@ This project was heavily inspired by Ben Eater's breadboard computer (something 
 
 ### Specs
 - 1x1 tile space
-- Uses 913 SG13G2 cells (according to Yosys)
+- Uses >1000 SG13G2 cells (according to Yosys)
 - 8-bit architecture
 - 16 bytes of addressable memory
 - Add/subtract operations
