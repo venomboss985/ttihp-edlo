@@ -32,7 +32,7 @@
 
 ## PRIORITY
 - [x] ~~Clock speed in `config.json` significance?~~ (likely just for documentation)
-- [ ] Research submission details
+- [x] Research submission details
 - [x] Update `docs/info.md` page
 
 ## BACKLOG
