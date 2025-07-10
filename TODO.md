@@ -25,7 +25,7 @@
     - 4KHz input clock
     - Can perform basic addition and subtraction
     - Data can be stored and retrieved from memory
-- [ ] Good enough docs
+- [x] Good enough docs
     - Describe project
     - Usage docs (in `docs/` folder)
     - Block diagram of circuit
@@ -38,7 +38,7 @@
     - [ ] Gate level testing?
 - [x] ~~Clock speed in `config.json` significance?~~ (likely just for documentation)
 - [ ] Research submission details
-- [ ] Update `docs/info.md` page
+- [x] Update `docs/info.md` page
 
 ## BACKLOG
 - [ ] Additional instructions?
